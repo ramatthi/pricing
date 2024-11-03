@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Table, TableColumn } from '@backstage/core-components';
+import EditIcon from '@material-ui/icons/Edit';
+import { Box, Typography, Breadcrumbs, Link } from '@material-ui/core';
+import EditPricing from './edit'; 
 
 type RidePricing = {
   id: number;
@@ -13,11 +16,10 @@ type RidePricing = {
 
 type DenseTableProps = {
   pricing: RidePricing[];
+  onEdit: (pricing: RidePricing) => void;
 };
 
-const DenseTable: React.FC<DenseTableProps> = ({ pricing }) => {
-  const [data] = useState<RidePricing[]>(pricing);
-
+const DenseTable: React.FC<DenseTableProps> = ({ pricing, onEdit }) => {
   const columns: TableColumn<RidePricing>[] = [
     { title: 'Vehicle Type', field: 'vehicleType' },
     { title: 'Base KMS', field: 'baseKms' },
@@ -25,13 +27,22 @@ const DenseTable: React.FC<DenseTableProps> = ({ pricing }) => {
     { title: 'Base Rate - Night Time (INR)', field: 'baseRateNight' },
     { title: 'Per KMS - Day Time (INR)', field: 'perKmsDay' },
     { title: 'Per KMS - Night Time (INR)', field: 'perKmsNight' },
+    {
+      title: 'Edit',
+      render: (rowData: RidePricing) => (
+        <EditIcon
+          style={{ cursor: 'pointer' }}
+          onClick={() => onEdit(rowData)}
+        />
+      ),
+    },
   ];
 
   return (
     <Table
-      options={{ search: false, paging: false, sorting: false }}
+      options={{ search: true, paging: false, sorting: false }}
       columns={columns}
-      data={data}
+      data={pricing}
       style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
     />
   );
@@ -40,24 +51,41 @@ const DenseTable: React.FC<DenseTableProps> = ({ pricing }) => {
 const FlatComponent: React.FC = () => {
   const initialPricing: RidePricing[] = [
     { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    { id: 1, vehicleType: 'Car', baseKms: 10, baseRateDay: 500, baseRateNight: 600, perKmsDay: 15, perKmsNight: 18 },
-    // Add more sample data as needed
-    // Add more sample data as needed
+    // Add additional initial pricing data here
   ];
 
-  return <DenseTable pricing={initialPricing} />;
+  const [pricing, setPricing] = useState<RidePricing[]>(initialPricing);
+  const [editingPricing, setEditingPricing] = useState<RidePricing | null>(null);
+
+  const handleEdit = (pricing: RidePricing) => {
+    setEditingPricing(pricing);
+  };
+
+  const handleSave = (updatedPricing: RidePricing) => {
+    setPricing((prevPricing) =>
+      prevPricing.map((item) => (item.id === updatedPricing.id ? updatedPricing : item))
+    );
+    setEditingPricing(null);
+  };
+
+  return (
+    <div>
+      <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
+        <Typography color="inherit">Flat Pricing</Typography>
+        {editingPricing ? (
+          <Typography color="textPrimary">Edit Pricing</Typography>
+        ) : (
+          <Typography color="textPrimary">View Pricing</Typography>
+        )}
+      </Breadcrumbs>
+      
+      {editingPricing ? (
+        <EditPricing pricing={editingPricing} onSave={handleSave} />
+      ) : (
+        <DenseTable pricing={pricing} onEdit={handleEdit} />
+      )}
+    </div>
+  );
 };
 
 export default FlatComponent;
