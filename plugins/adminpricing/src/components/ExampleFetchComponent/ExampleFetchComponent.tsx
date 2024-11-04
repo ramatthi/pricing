@@ -2,11 +2,15 @@ import React from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
 import FlatComponent from './pages/flat/Flat';
+import SlabComponent from './pages/slab/Slab';
+import DynamicComponent from './pages/dynamic/Dynamic';
+import HourlyComponent from './pages/hourly/Hourly';
+import IntercityComponent from './pages/intercity/Intercity';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-      <Card sx={{ maxWidth: 1200, width: '100%', minHeight: 650, boxShadow: 2 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+      <Card sx={{ maxWidth: '100%', width: '100%', minHeight: 650, boxShadow: 2 }}>
         <CardContent>
           
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, justifyContent: 'space-around' }}>
@@ -75,6 +79,10 @@ export const ExampleFetchComponent: React.FC = () => {
           <Box sx={{ marginTop: -2, padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
+              <Route path="Slabcomponent" element={<SlabComponent />} />
+              <Route path="Dynamiccomponent" element={<DynamicComponent />} />
+              <Route path="Intercitycomponent" element={<IntercityComponent />} />
+              <Route path="Hourlycomponent" element={<HourlyComponent />} />
               {/* Add other routes as needed */}
             </Routes>
           </Box>
