@@ -1,80 +1,46 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
 import FlatComponent from './Flat';
+import SlabComponent from './Slab';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-      <Card sx={{ maxWidth: 1200, width: '100%', minHeight: 650, boxShadow: 2 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+      <Card sx={{ maxWidth: 1300, width: '100%', minHeight: 670, boxShadow: 2 }}>
         <CardContent>
           
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, justifyContent: 'space-around' }}>
-            <NavLink
-              to="Flatcomponent"
-              style={({ isActive }) => ({
-                textDecoration: isActive ? 'underline' : 'none',
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: isActive ? 'blue' : 'inherit',
-              })}
-            >
-              <Box sx={{ textAlign: 'center', cursor: 'pointer' }}>
-                <Typography variant="h6">Flat</Typography>
-              </Box>
-            </NavLink>
-            <NavLink
-              to="Slabcomponent"
-              style={({ isActive }) => ({
-                textDecoration: isActive ? 'underline' : 'none',
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: isActive ? 'blue' : 'inherit',
-              })}
-            >
-              <Box sx={{ textAlign: 'center', cursor: 'pointer' }}>
-                <Typography variant="h6">Slab</Typography>
-              </Box>
-            </NavLink>
-            <NavLink
-              to="Dynamiccomponent"
-              style={({ isActive }) => ({
-                textDecoration: isActive ? 'underline' : 'none',
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: isActive ? 'blue' : 'inherit',
-              })}
-            >
-              <Box sx={{ textAlign: 'center', cursor: 'pointer' }}>
-                <Typography variant="h6">Dynamic</Typography>
-              </Box>
-            </NavLink>
-            <NavLink
-              to="Intercitycomponent"
-              style={({ isActive }) => ({
-                textDecoration: isActive ? 'underline' : 'none',
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: isActive ? 'blue' : 'inherit',
-              })}
-            >
-              <Box sx={{ textAlign: 'center', cursor: 'pointer' }}>
-                <Typography variant="h6">Intercity</Typography>
-              </Box>
-            </NavLink>
-            <NavLink
-              to="Hourlycomponent"
-              style={({ isActive }) => ({
-                textDecoration: isActive ? 'underline' : 'none',
-                fontWeight: isActive ? 'bold' : 'normal',
-                color: isActive ? 'blue' : 'inherit',
-              })}
-            >
-              <Box sx={{ textAlign: 'center', cursor: 'hover' }}>
-                <Typography variant="h6">Hourly</Typography>
-              </Box>
-            </NavLink>
+          {/* Header Buttons */}
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, justifyContent: 'space-around', marginBottom: 3 }}>
+            {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map((label) => (
+              <NavLink
+                key={label}
+                to={`${label}component`}
+                style={({ isActive }) => ({
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '3px 30px',
+                  borderRadius: '50px',
+                  cursor: 'pointer',
+                  fontWeight: 'normal',
+                  border: '1px solid black',
+                  color: isActive ? 'Highlight' : '',
+                                })}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  {label}
+                </Typography>
+              </NavLink>
+            ))}
           </Box>
+
           {/* Nested Routes */}
-          <Box sx={{ marginTop: -2, padding: 2 }}>
+          <Box sx={{ marginTop: -4, padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
+              <Route path="Slabcomponent" element={<SlabComponent />} />
               {/* Add other routes as needed */}
             </Routes>
           </Box>
