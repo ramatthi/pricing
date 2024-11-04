@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Card, CardContent } from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
-import FlatComponent from './Flat';
+import FlatComponent from './pages/flat/Flat';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
