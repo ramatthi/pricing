@@ -163,7 +163,7 @@ const DenseTable: React.FC = () => {
     </div>
   );
 };
-
+//adding comments
 const FlatComponent: React.FC = () => {
   return <DenseTable />;
 };
