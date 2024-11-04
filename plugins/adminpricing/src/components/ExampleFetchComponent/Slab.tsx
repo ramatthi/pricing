@@ -244,12 +244,13 @@ const DenseTable: React.FC = () => {
             data={data}
             style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
           />
+         
         </div>
       )}
     </div>
   );
 };
-
+// common
 const SlabComponent: React.FC = () => {
   return <DenseTable />;
 };
