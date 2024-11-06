@@ -27,6 +27,7 @@ export const ExampleFetchComponent: React.FC = () => {
                   fontWeight: 'normal',
                   border: '1px solid black',
                   color: isActive ? 'Highlight' : '',
+                 
                                 })}
               >
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
@@ -36,7 +37,7 @@ export const ExampleFetchComponent: React.FC = () => {
             ))}
           </Box>
 
-          {/* Nested Routes */}
+       
           <Box sx={{ marginTop: -4, padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />

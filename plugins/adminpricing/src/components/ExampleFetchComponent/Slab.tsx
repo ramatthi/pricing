@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, TableColumn } from '@backstage/core-components';
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, IconButton, Button, Paper, Grid, Typography, Breadcrumbs, Link } from '@material-ui/core';
+import { IconButton, Button, Paper, Grid, Typography, Breadcrumbs, Link } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
+import EditableTextField from './Components/EditableTextField'; 
+import BreadcrumbsComponent from './Components/Breadcrumbs'; 
 
 type RidePricing = {
   id: number;
@@ -14,7 +16,7 @@ type RidePricing = {
   pricePerKm: number;
   previousTotalPrice: number;
   createdBy: number;
-  updatedby: number; 
+  updatedby: number;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -88,46 +90,14 @@ const DenseTable: React.FC = () => {
 
   const columns: TableColumn<RidePricing>[] = [
     { title: 'ID', field: 'id' },
-    {
-      title: 'Booking Type',
-      field: 'bookingType',
-      render: (rowData) => rowData.bookingType,
-    },
-    {
-      title: 'Vehicle Type',
-      field: 'vehicleType',
-      render: (rowData) => rowData.vehicleType,
-    },
-    {
-      title: 'Min Distance',
-      field: 'minDistance',
-      render: (rowData) => rowData.minDistance,
-    },
-    {
-      title: 'Max Distance',
-      field: 'maxDistance',
-      render: (rowData) => rowData.maxDistance,
-    },
-    {
-      title: 'Price Per km',
-      field: 'pricePerKm',
-      render: (rowData) => rowData.pricePerKm,
-    },
-    {
-      title: 'Previous Total Price',
-      field: 'previousTotalPrice',
-      render: (rowData) => rowData.previousTotalPrice,
-    },
-    {
-      title: 'Created by',
-      field: 'createdBy',
-      render: (rowData) => rowData.createdBy,
-    },
-    {
-      title: 'Updated by',
-      field: 'updatedby',
-      render: (rowData) => rowData.updatedby,
-    },
+    { title: 'Booking Type', field: 'bookingType' },
+    { title: 'Vehicle Type', field: 'vehicleType' },
+    { title: 'Min Distance', field: 'minDistance' },
+    { title: 'Max Distance', field: 'maxDistance' },
+    { title: 'Price Per km', field: 'pricePerKm' },
+    { title: 'Previous Total Price', field: 'previousTotalPrice' },
+    { title: 'Created by', field: 'createdBy' },
+    { title: 'Updated by', field: 'updatedby' },
     {
       title: 'Actions',
       field: 'actions',
@@ -139,88 +109,43 @@ const DenseTable: React.FC = () => {
     },
   ];
 
+
+  const formFields: { label: string; field: keyof RidePricing; type: string }[] = [
+    { label: 'Vehicle Type', field: 'vehicleType', type: 'text' },
+    { label: 'Min Distance', field: 'minDistance', type: 'number' },
+    { label: 'Max Distance', field: 'maxDistance', type: 'number' },
+    { label: 'Booking Type', field: 'bookingType', type: 'number' },
+    { label: 'Price Per km', field: 'pricePerKm', type: 'number' },
+    { label: 'Updated By', field: 'updatedby', type: 'number' },
+    { label: 'Previous Total Price', field: 'previousTotalPrice', type: 'number' },
+  ];
+
   return (
     <div>
       {isEditing ? (
         <Paper className={classes.editContainer}>
           <div className={classes.breadcrumbsContainer}>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link 
-                color="inherit" 
-                onClick={handleCancel} 
-                className={classes.link}
-              >
-                Slab Pricing 
-              </Link>
-              <Typography color="textPrimary">Edit Slab Pricing</Typography>
-            </Breadcrumbs>
+          <BreadcrumbsComponent handleCancel={handleCancel} />
           </div>
           <Typography variant="h6" className={classes.title}>
             Edit Slab Pricing
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Vehicle Type"
-                fullWidth
-                value={editableRow?.vehicleType}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, vehicleType: e.target.value })}
+            {formFields.map((field) => (
+              <EditableTextField
+                key={field.field}
+                label={field.label}
+                value={editableRow ? editableRow[field.field] : ''}
+                onChange={(e) =>
+                  editableRow &&
+                  setEditableRow({
+                    ...editableRow,
+                    [field.field]: field.type === 'number' ? Number(e.target.value) : e.target.value,
+                  })
+                }
+                type={field.type}
               />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Min Distance"
-                type="number"
-                fullWidth
-                value={editableRow?.minDistance}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, minDistance: Number(e.target.value) })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Max Distance"
-                type="number"
-                fullWidth
-                value={editableRow?.maxDistance}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, maxDistance: Number(e.target.value) })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Booking Type"
-                type="number"
-                fullWidth
-                value={editableRow?.bookingType}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, bookingType: Number(e.target.value) })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Price Per km"
-                type="number"
-                fullWidth
-                value={editableRow?.pricePerKm}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, pricePerKm: Number(e.target.value) })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Updated By"
-                type="number"
-                fullWidth
-                value={editableRow?.updatedby}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, updatedby: Number(e.target.value) })}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                label="Previous Total Price"
-                type="number"
-                fullWidth
-                value={editableRow?.previousTotalPrice}
-                onChange={(e) => editableRow && setEditableRow({ ...editableRow, previousTotalPrice: Number(e.target.value) })}
-              />
-            </Grid>
+            ))}
             <Grid item xs={12}>
               <Button variant="contained" color="primary" onClick={handleSave}>
                 Save
@@ -244,13 +169,12 @@ const DenseTable: React.FC = () => {
             data={data}
             style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
           />
-         
         </div>
       )}
     </div>
   );
 };
-// common
+
 const SlabComponent: React.FC = () => {
   return <DenseTable />;
 };

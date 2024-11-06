@@ -2,27 +2,59 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Table, TableColumn } from '@backstage/core-components';
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  TextField,
+  IconButton,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Paper,
+  Grid,
+  Typography,
+  Breadcrumbs,
+  Link,
+} from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-import Button from '@material-ui/core/Button';
 
 type RidePricing = {
   id: number;
-  minimumDistance: number;
-  maximumDistance: number;
-  vehicleType: string;
+  bookingtype: string;
+  vehicletype: string;
+  minDistance: number;
+  maxDistance: number;
   price: number;
-  previousTotalPrice: number;
+  previousPrice: number;
+  isActive: boolean;
+  approvedBy: string;
+  createdBy: number;
+  updatedBy: number;
 };
 
-const useStyles = makeStyles({
-  pagination: {
-    marginBottom: '-2px',
+const useStyles = makeStyles((theme) => ({
+  tableContainer: {
     backgroundColor: 'transparent',
+    marginTop: '-25px',
   },
-  
-});
+  editContainer: {
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[0],
+  },
+  title: {
+    marginBottom: theme.spacing(2),
+  },
+  button: {
+    marginLeft: theme.spacing(1),
+  },
+  breadcrumbsContainer: {
+    marginBottom: theme.spacing(2),
+    
+  },
+  link: {
+    cursor: 'pointer',
+  },
+}));
 
 const DenseTable: React.FC = () => {
   const classes = useStyles();
@@ -30,12 +62,11 @@ const DenseTable: React.FC = () => {
   const [editableRow, setEditableRow] = useState<RidePricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // Fetch data from API using Axios
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://api.example.com/rides'); // Replace with your API URL
-        setData(response.data); // Assuming the response data is in the correct format
+        const response = await axios.get('https://api.example.com/rides'); 
+        setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -54,43 +85,33 @@ const DenseTable: React.FC = () => {
     setIsEditing(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editableRow) {
-      setData((prev) =>
-        prev.map((item) => (item.id === editableRow.id ? editableRow : item))
-      );
-      setEditableRow(null);
-      setIsEditing(false);
+      try {
+        await axios.put(`https://api.example.com/rides/${editableRow.id}`, editableRow);
+        setData((prev) =>
+          prev.map((item) => (item.id === editableRow.id ? editableRow : item))
+        );
+        setEditableRow(null);
+        setIsEditing(false);
+      } catch (error) {
+        console.error('Error updating data:', error);
+      }
     }
   };
 
   const columns: TableColumn<RidePricing>[] = [
     { title: 'ID', field: 'id' },
-    {
-      title: 'Vehicle Type',
-      field: 'vehicleType',
-      render: (rowData) => rowData.vehicleType,
-    },
-    {
-      title: 'Min Distance',
-      field: 'minimumDistance',
-      render: (rowData) => rowData.minimumDistance,
-    },
-    {
-      title: 'Max Distance',
-      field: 'maximumDistance',
-      render: (rowData) => rowData.maximumDistance,
-    },
-    {
-      title: 'Price',
-      field: 'pricePerKm',
-      render: (rowData) => rowData.price,
-    },
-    {
-      title: 'Previous Total Price',
-      field: 'previousTotalPrice',
-      render: (rowData) => rowData.previousTotalPrice,
-    },
+    { title: 'Booking Type', field: 'bookingtype' },
+    { title: 'Vehicle Type', field: 'vehicletype' },
+    { title: 'Min Distance', field: 'minDistance' },
+    { title: 'Max Distance', field: 'maxDistance' },
+    { title: 'Price', field: 'price' },
+    { title: 'Previous Price', field: 'previousPrice' },
+    { title: 'Is Active', field: 'isActive' },
+    { title: 'Approved By', field: 'approvedBy' },
+    { title: 'Created By', field: 'createdBy' },
+    { title: 'Updated By', field: 'updatedBy' },
     {
       title: 'Actions',
       field: 'actions',
@@ -105,65 +126,161 @@ const DenseTable: React.FC = () => {
   return (
     <div>
       {isEditing ? (
-        <div style={{ marginBottom: '20px' }}>
-          <h3>Edit Ride Pricing</h3>
-          <TextField
-            label="Vehicle Type"
-            value={editableRow?.vehicleType}
-            onChange={(e) => editableRow && setEditableRow({ ...editableRow, vehicleType: e.target.value })}
-          />
-          <TextField
-            label="Min Distance"
-            type="number"
-            value={editableRow?.minimumDistance}
-            onChange={(e) => editableRow && setEditableRow({ ...editableRow, minimumDistance: Number(e.target.value) })}
-          />
-          <TextField
-            label="Max Distance"
-            type="number"
-            value={editableRow?.maximumDistance}
-            onChange={(e) => editableRow && setEditableRow({ ...editableRow, maximumDistance: Number(e.target.value) })}
-          />
-          <TextField
-            label="Price"
-            type="number"
-            value={editableRow?.price}
-            onChange={(e) => editableRow && setEditableRow({ ...editableRow, price: Number(e.target.value) })}
-          />
-          <TextField
-            label="Previous Total Price"
-            type="number"
-            value={editableRow?.previousTotalPrice}
-            onChange={(e) => editableRow && setEditableRow({ ...editableRow, previousTotalPrice: Number(e.target.value) })}
-          />
-          <div style={{ marginTop: '10px' }}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
-              Save
-            </Button>
-            <Button variant="contained" color="secondary" onClick={handleCancel} style={{ marginLeft: '10px' }}>
-              Cancel
-            </Button>
+        <Paper className={classes.editContainer}>
+          <div className={classes.breadcrumbsContainer}>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link
+                color="inherit"
+                onClick={handleCancel}
+                className={classes.link}
+              >
+                Flat Pricing
+              </Link>
+              <Typography color="textPrimary">Edit Flat Pricing</Typography>
+            </Breadcrumbs>
           </div>
-        </div>
+          <Typography variant="h6" className={classes.title}>
+            Edit Flat Pricing
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Booking Type"
+                fullWidth
+                value={editableRow?.bookingtype}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, bookingtype: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Vehicle Type"
+                fullWidth
+                value={editableRow?.vehicletype}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, vehicletype: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Min Distance"
+                type="number"
+                fullWidth
+                value={editableRow?.minDistance}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, minDistance: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Max Distance"
+                type="number"
+                fullWidth
+                value={editableRow?.maxDistance}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, maxDistance: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Price"
+                type="number"
+                fullWidth
+                value={editableRow?.price}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, price: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Previous Price"
+                type="number"
+                fullWidth
+                value={editableRow?.previousPrice}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, previousPrice: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={editableRow?.isActive || false}
+                    onChange={(e) =>
+                      editableRow && setEditableRow({ ...editableRow, isActive: e.target.checked })
+                    }
+                  />
+                }
+                label="Is Active"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Approved By"
+                fullWidth
+                value={editableRow?.approvedBy}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, approvedBy: e.target.value })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Created By"
+                type="number"
+                fullWidth
+                value={editableRow?.createdBy}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, createdBy: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Updated By"
+                type="number"
+                fullWidth
+                value={editableRow?.updatedBy}
+                onChange={(e) =>
+                  editableRow && setEditableRow({ ...editableRow, updatedBy: Number(e.target.value) })
+                }
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" color="primary" onClick={handleSave}>
+                Save
+              </Button>
+              <Button variant="contained" color="secondary" onClick={handleCancel} className={classes.button}>
+                Cancel
+              </Button>
+            </Grid>
+          </Grid>
+        </Paper>
       ) : (
-        <Table<RidePricing>
-          options={{
-            search: false,
-            paging: false,
-            sorting :false,
-            pageSize: 10,
-            pageSizeOptions: [5, 10, 20],
-            padding: 'dense',
-          }}
-          columns={columns}
-          data={data}
-          style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
-        />
+        <div className={classes.tableContainer}>
+          <Table<RidePricing>
+            options={{
+              search: false,
+              paging: false,
+              sorting: false,
+              padding: 'dense',
+            }}
+            columns={columns}
+            data={data}
+            style={{ backgroundColor: 'transparent', boxShadow: 'none' }}
+          />
+        </div>
       )}
     </div>
   );
 };
-//adding comments
+
 const FlatComponent: React.FC = () => {
   return <DenseTable />;
 };
