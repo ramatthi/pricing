@@ -1,18 +1,56 @@
-import React, { useEffect } from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import React from 'react';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
 import FlatComponent from './Flat';
 import SlabComponent from './Slab';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
-      <Card sx={{ maxWidth: 1300, width: '100%', minHeight: 670, boxShadow: 2 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        padding: 2,
+        bgcolor: '#f5f5f5',
+      }}
+    >
+      <Card
+        sx={{
+          maxWidth: 1300,
+          width: '100%',
+          minHeight: 670,
+          boxShadow: 3,
+          borderRadius: 2,
+        }}
+      >
         <CardContent>
-          
           {/* Header Buttons */}
-          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, justifyContent: 'space-around', marginBottom: 3 }}>
-            {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map((label) => (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 2,
+              justifyContent: 'center',
+              mb: 3,
+              bgcolor: '#ffffff',
+              padding: 1,
+              borderRadius: '8px',
+              boxShadow: 2,
+            }}
+          >
+            {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map(label => (
               <NavLink
                 key={label}
                 to={`${label}component`}
@@ -21,34 +59,31 @@ export const ExampleFetchComponent: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  padding: '3px 30px',
-                  borderRadius: '50px',
+                  borderRadius: '20px',
                   cursor: 'pointer',
-                  fontWeight: 'normal',
-                  border: '1px solid black',
-                  color: isActive ? 'Highlight' : '',
-                 
-                                })}
+                  fontWeight: 'bold',
+                  color: isActive ? '#ffffff' : '#007BFF',
+                  padding: '8px 16px',
+                  backgroundColor: isActive ? '#007BFF' : '#e0e0e0',
+                  transition: 'background-color 0.3s ease, color 0.3s ease',
+                })}
               >
-                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  {label}
-                </Typography>
+                <Typography variant="body1">{label}</Typography>
               </NavLink>
             ))}
           </Box>
 
-       
-          <Box sx={{ marginTop: -4, padding: 2 }}>
+          {/* Route components for different tabs */}
+          <Box sx={{ marginTop: 3 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
               <Route path="Slabcomponent" element={<SlabComponent />} />
-              {/* Add other routes as needed */}
+              {/* Add routes for Dynamic, Intercity, Hourly components here */}
             </Routes>
           </Box>
         </CardContent>
       </Card>
     </Box>
-    //comments
   );
 };
 

@@ -55,6 +55,7 @@
   },
   "packageManager": "yarn@4.4.1",
   "dependencies": {
+    "@backstage/core-components": "^0.15.1",
     "@mui/icons-material": "^6.1.6"
   }
 }

@@ -115,7 +115,7 @@ const DenseTable: React.FC = () => {
     {
       title: 'Actions',
       field: 'actions',
-      render: (rowData) => (
+      render: (rowData: RidePricing) => (
         <IconButton onClick={() => handleEditClick(rowData)}>
           <EditIcon />
         </IconButton>
