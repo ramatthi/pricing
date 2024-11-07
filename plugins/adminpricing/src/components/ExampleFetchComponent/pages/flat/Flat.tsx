@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableColumn } from '@backstage/core-components';
 import EditIcon from '@material-ui/icons/Edit';
-import { Typography, Breadcrumbs } from '@material-ui/core';
 import EditPricing from './FlatEdit';
+import BreadcrumbsComponent from '../components/BreadCrumbs';
 
 type RidePricing = {
   id: number;
-  vehicleType: string;
-  baseKms: number;
-  baseRateDay: number;
-  baseRateNight: number;
-  perKmsDay: number;
-  perKmsNight: number;
+  bookingTypeId: number;         
+  vehicleTypeId: number;         
+  minDistance: number;           
+  maxDistance: number;           
+  price: number;                 
+  previousPrice: number;         
+  isActive: boolean;             
+  isApproved: boolean;           
+  approvedBy: number;          
+  createdBy: number;            
+  updatedBy: number;          
 };
+
 
 const FlatComponent: React.FC = () => {
   const [pricing, setPricing] = useState<RidePricing[]>([]);
@@ -61,12 +67,18 @@ const FlatComponent: React.FC = () => {
   };
 
   const columns: TableColumn<RidePricing>[] = [
-    { title: 'Vehicle Type', field: 'vehicleType' },
-    { title: 'Base KMS', field: 'baseKms' },
-    { title: 'Base Rate - Day Time (INR)', field: 'baseRateDay' },
-    { title: 'Base Rate - Night Time (INR)', field: 'baseRateNight' },
-    { title: 'Per KMS - Day Time (INR)', field: 'perKmsDay' },
-    { title: 'Per KMS - Night Time (INR)', field: 'perKmsNight' },
+    { title: 'Vehicle Id', field: 'id' },
+    { title: 'Booking Type Id', field: 'bookingTypeId' },
+    { title: 'Vehicle Type Id', field: 'vehicleTypeId' },
+    { title: 'Min Distance', field: 'minDistance' },
+    { title: 'Max Distance', field: 'maxDistance' },
+    { title: 'Price', field: 'price' },
+    { title: 'Previous Price', field: 'previousPrice' },
+    { title: 'Is Active', field: 'isActive' },
+    { title: 'Is Approved', field: 'isApproved' },
+    { title: 'Approved By', field: 'approvedBy' },
+    { title: 'Created By', field: 'createdBy' },
+    { title: 'Updated By', field: 'updatedBy' },        
     {
       title: 'Edit',
       render: (rowData: RidePricing) => (
@@ -80,15 +92,9 @@ const FlatComponent: React.FC = () => {
 
   return (
     <div>
-      <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
-        <Typography color="inherit">Flat Pricing</Typography>
-        {editingPricing ? (
-          <Typography color="textPrimary">Edit Pricing</Typography>
-        ) : (
-          <Typography color="textPrimary">View Pricing</Typography>
-        )}
-      </Breadcrumbs>
-      
+      {editingPricing && (
+        <BreadcrumbsComponent handleCancel={handleCancel}/> 
+      )}
       {editingPricing ? (
         // Pass handleCancel to EditPricing
         <EditPricing pricing={editingPricing} onSave={handleSave} onCancel={handleCancel} />
@@ -102,6 +108,7 @@ const FlatComponent: React.FC = () => {
       )}
     </div>
   );
+  
 };
 
 export default FlatComponent;

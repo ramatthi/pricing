@@ -5,12 +5,17 @@ import { Box, TextField, Button, Typography } from '@material-ui/core';
 
 type RidePricing = {
   id: number;
-  vehicleType: string;
-  baseKms: number;
-  baseRateDay: number;
-  baseRateNight: number;
-  perKmsDay: number;
-  perKmsNight: number;
+  bookingTypeId: number;         
+  vehicleTypeId: number;         
+  minDistance: number;           
+  maxDistance: number;           
+  price: number;                 
+  previousPrice: number;         
+  isActive: boolean;             
+  isApproved: boolean;           
+  approvedBy: number;          
+  createdBy: number;            
+  updatedBy: number;          
 };
 
 type EditPricingProps = {
@@ -32,9 +37,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
   const handleSave = async () => {
     setError(null); // Reset any previous errors
     try {
-      const { id, vehicleType, baseKms, baseRateDay, baseRateNight, perKmsDay, perKmsNight } = editedPricing;
-      const payload = { id, vehicleType, baseKms, baseRateDay, baseRateNight, perKmsDay, perKmsNight };
-      console.log(payload);
+      const { id, bookingTypeId, vehicleTypeId, minDistance, price, previousPrice, isActive ,isApproved,approvedBy,createdBy,updatedBy} = editedPricing;
+      const payload = { id, bookingTypeId, vehicleTypeId, minDistance, price, previousPrice, isActive ,isApproved,approvedBy,createdBy,updatedBy};
       const response = await fetch(`http://localhost:8080/api/EditFlat`, {
         method: 'PUT',
         headers: {
@@ -79,8 +83,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Vehicle Type"
           fullWidth
           type="text"
-          value={editedPricing.vehicleType}
-          onChange={(e) => handleChange('vehicleType', e.target.value)}
+          value={editedPricing.bookingTypeId}
+          onChange={(e) => handleChange('bookingTypeId', e.target.value)}
         />
       </Box>
       <Box mb={2}>
@@ -88,8 +92,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Base Kms"
           fullWidth
           type="number"
-          value={editedPricing.baseKms}
-          onChange={(e) => handleChange('baseKms', e.target.value)}
+          value={editedPricing.vehicleTypeId}
+          onChange={(e) => handleChange('vehicleTypeId', e.target.value)}
         />
       </Box>
       <Box mb={2}>
@@ -97,8 +101,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Base Rate Day"
           fullWidth
           type="number"
-          value={editedPricing.baseRateDay}
-          onChange={(e) => handleChange('baseRateDay', e.target.value)}
+          value={editedPricing.minDistance}
+          onChange={(e) => handleChange('minDistance', e.target.value)}
         />
       </Box>
       <Box mb={2}>
@@ -106,8 +110,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Base Rate Night"
           fullWidth
           type="number"
-          value={editedPricing.baseRateNight}
-          onChange={(e) => handleChange('baseRateNight', e.target.value)}
+          value={editedPricing.maxDistance}
+          onChange={(e) => handleChange('maxDistance', e.target.value)}
         />
       </Box>
       <Box mb={2}>
@@ -115,8 +119,8 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Per Kms Day"
           fullWidth
           type="number"
-          value={editedPricing.perKmsDay}
-          onChange={(e) => handleChange('perKmsDay', e.target.value)}
+          value={editedPricing.price}
+          onChange={(e) => handleChange('price', e.target.value)}
         />
       </Box>
       <Box mb={2}>
@@ -124,8 +128,53 @@ const EditPricing: React.FC<EditPricingProps> = ({ pricing, onSave,onCancel}) =>
           label="Per Kms Night"
           fullWidth
           type="number"
-          value={editedPricing.perKmsNight}
-          onChange={(e) => handleChange('perKmsNight', e.target.value)}
+          value={editedPricing.previousPrice}
+          onChange={(e) => handleChange('previousPrice', e.target.value)}
+        />
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Per Kms Night"
+          fullWidth
+          type="number"
+          value={editedPricing.isActive}
+          onChange={(e) => handleChange('isActive', e.target.value)}
+        />
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Per Kms Night"
+          fullWidth
+          type="number"
+          value={editedPricing.isApproved}
+          onChange={(e) => handleChange('isApproved', e.target.value)}
+        />
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Per Kms Night"
+          fullWidth
+          type="number"
+          value={editedPricing.approvedBy}
+          onChange={(e) => handleChange('approvedBy', e.target.value)}
+        />
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Per Kms Night"
+          fullWidth
+          type="number"
+          value={editedPricing.createdBy}
+          onChange={(e) => handleChange('createdBy', e.target.value)}
+        />
+      </Box>
+      <Box mb={2}>
+        <TextField
+          label="Per Kms Night"
+          fullWidth
+          type="number"
+          value={editedPricing.previousPrice}
+          onChange={(e) => handleChange('previousPrice', e.target.value)}
         />
       </Box>
       <Box display="flex" justifyContent="space-between">

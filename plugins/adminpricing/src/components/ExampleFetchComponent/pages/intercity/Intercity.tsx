@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableColumn } from '@backstage/core-components';
 import EditIcon from '@material-ui/icons/Edit';
-import { Typography, Breadcrumbs } from '@material-ui/core';
-import EditPricing from './IntercityEdit';
+import BreadcrumbsComponent from '../components/BreadCrumbs'; // Assuming breadcrumbs are correctly defined
+import EditableTextField from '../components/Edit';  // Assuming EditableTextField is correctly defined
 
 type RidePricing = {
   id: number;
@@ -17,6 +17,8 @@ type RidePricing = {
 const IntercityComponent: React.FC = () => {
   const [pricing, setPricing] = useState<RidePricing[]>([]);
   const [editingPricing, setEditingPricing] = useState<RidePricing | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchPricingData = async () => {
@@ -26,40 +28,67 @@ const IntercityComponent: React.FC = () => {
         setPricing(data);
       } catch (error) {
         console.error('Error fetching pricing data:', error);
+        setError('Error fetching pricing data. Please try again.');
       }
     };
     fetchPricingData();
   }, []);
 
+  // Handle edit action
   const handleEdit = (pricing: RidePricing) => {
     setEditingPricing(pricing);
   };
 
+  // Handle saving updated pricing
   const handleSave = async (updatedPricing: RidePricing) => {
+    setIsSaving(true);
     try {
-      await fetch(`http://localhost:8080/api/Flat/${updatedPricing.id}`, {
+      const response = await fetch('http://localhost:8080/api/EditFlat', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedPricing),
       });
+
+      if (!response.ok) throw new Error('Failed to update pricing');
 
       setPricing((prevPricing) =>
         prevPricing.map((item) => (item.id === updatedPricing.id ? updatedPricing : item))
       );
+      setEditingPricing(null);
     } catch (error) {
       console.error('Error updating pricing data:', error);
+      setError('Error updating pricing data. Please try again.');
     } finally {
-      setEditingPricing(null);
+      setIsSaving(false);
     }
   };
 
-  // New function to handle canceling the edit
+  // Handle cancel action
   const handleCancel = () => {
-    setEditingPricing(null); // Reset to null to exit edit mode
+    setEditingPricing(null);
+    setError(null); // Clear any previous errors
   };
 
+  // Handle form field change
+  const handleChange = (field: keyof Omit<RidePricing, 'id'>, value: string) => {
+    if (editingPricing) {
+      const parsedValue = field === 'vehicleType' ? value : parseFloat(value);
+      setEditingPricing(prev => ({ ...prev!, [field]: parsedValue }));
+    }
+  };
+
+  // Validate form data
+  const validateForm = (): boolean => {
+    if (!editingPricing) return false;
+    const { baseKms, baseRateDay, baseRateNight, perKmsDay, perKmsNight } = editingPricing;
+    if ([baseKms, baseRateDay, baseRateNight, perKmsDay, perKmsNight].some(val => isNaN(val))) {
+      setError('Please ensure all fields are filled with valid numeric values.');
+      return false;
+    }
+    return true;
+  };
+
+  // Columns configuration for the table
   const columns: TableColumn<RidePricing>[] = [
     { title: 'Vehicle Type', field: 'vehicleType' },
     { title: 'Base KMS', field: 'baseKms' },
@@ -78,20 +107,49 @@ const IntercityComponent: React.FC = () => {
     },
   ];
 
+  // Fields configuration for the editable form
+  const pricingFields: { label: string; field: keyof Omit<RidePricing, 'id'>; type: 'text' | 'number' }[] = [
+    { label: 'Vehicle Type', field: 'vehicleType', type: 'text' },
+    { label: 'Base Kms', field: 'baseKms', type: 'number' },
+    { label: 'Base Rate Day', field: 'baseRateDay', type: 'number' },
+    { label: 'Base Rate Night', field: 'baseRateNight', type: 'number' },
+    { label: 'Per Kms Day', field: 'perKmsDay', type: 'number' },
+    { label: 'Per Kms Night', field: 'perKmsNight', type: 'number' },
+  ];
+
   return (
     <div>
-      <Breadcrumbs aria-label="breadcrumb" style={{ marginBottom: '16px' }}>
-        <Typography color="inherit">Flat Pricing</Typography>
-        {editingPricing ? (
-          <Typography color="textPrimary">Edit Pricing</Typography>
-        ) : (
-          <Typography color="textPrimary">View Pricing</Typography>
-        )}
-      </Breadcrumbs>
-      
+      {/* Show breadcrumbs if editing */}
+      {editingPricing && (
+        <BreadcrumbsComponent handleCancel={handleCancel} />
+      )}
+
       {editingPricing ? (
-        // Pass handleCancel to EditPricing
-        <EditPricing pricing={editingPricing} onSave={handleSave} onCancel={handleCancel} />
+        <div>
+          {error && <div style={{ color: 'red' }}>{error}</div>}
+          {pricingFields.map(field => (
+            <EditableTextField
+              key={field.field}
+              label={field.label}
+              value={editingPricing[field.field] ?? ''}
+              onChange={(e) =>
+                handleChange(field.field, e.target.value)
+              }
+              type={field.type}
+            />
+          ))}
+          <div>
+            <button
+              onClick={() => {
+                if (validateForm()) handleSave(editingPricing);
+              }}
+              disabled={isSaving}
+            >
+              Save
+            </button>
+            <button onClick={handleCancel}>Cancel</button>
+          </div>
+        </div>
       ) : (
         <Table
           options={{ search: true, paging: false, sorting: false }}
