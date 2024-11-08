@@ -13,7 +13,9 @@ import { ExampleFetchComponent } from '../ExampleFetchComponent';
 
 export const ExampleComponent = () => (
   <Page themeId="tool">
-    <Header title="Welcome to adminpricing!" subtitle="">
+    <Header title="Welcome to adminpricing!" subtitle=""
+    style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 1000, width: '100%' }}
+    > 
     </Header>
     <Content>
       {/* <ContentHeader title="Pricing">
