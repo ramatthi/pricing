@@ -7,9 +7,6 @@ interface BreadcrumbsComponentProps {
   breadcrumblabels:[string,string];
 }
 
-
-
-
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ handleCancel,breadcrumblabels }) => {
   return (
     <div>

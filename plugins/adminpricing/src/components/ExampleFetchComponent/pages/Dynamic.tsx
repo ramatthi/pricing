@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { Button, IconButton, makeStyles } from '@material-ui/core';
 import { Table, TableColumn } from '@backstage/core-components';
 import EditIcon from '@material-ui/icons/Edit';
 import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import DynamicEdit from '../Components/DynamicEdit';
+import AddPricing from '../Components/AddPricing';
 
 type Pricing = {
   id: number;
@@ -23,14 +24,19 @@ const useStyles = makeStyles((theme) => ({
     container: { backgroundColor: 'transparent',
       marginTop: '-35px',  },
     breadcrumbs: { marginBottom: theme.spacing(2), cursor: 'pointer' },
+    addButton: {
+      marginRight :'10px',
+      marginBottom: '10px'
+    }
   }));
+
 
 const Dynamic: React.FC = () => {
   const classes = useStyles(); 
   const [data, setData] = useState<Pricing[]>([]); 
   const [editableRow, setEditableRow] = useState<Pricing | null>(null); 
   const [isEditing, setIsEditing] = useState(false); 
-
+  const [isAdding,setIsAdding ] =useState(false);
   
   useEffect(() => {
     axios
@@ -39,27 +45,31 @@ const Dynamic: React.FC = () => {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  // Handle the edit button click
+
   const handleEditClick = (row: Pricing) => {
     setEditableRow(row);
     setIsEditing(true);
   };
+  const handleAddClick =() =>{
+    setIsAdding(true);
+  }
 
-  // Handle cancel action for editing
+ 
   const handleCancel = () => {
     setEditableRow(null);
     setIsEditing(false);
+    setIsAdding(false);
   };
 
-  // Handle field change in the editable form
+  
   const handleFieldChange = (field: string, value: any) => {
     if (editableRow) {
       setEditableRow({ ...editableRow, [field]: value });
     }
   };
 
-  // Define columns for the table
-  const columns: TableColumn<Pricing>[] = [
+
+  const columns: TableColumn<Pricing>[] = useMemo(() =>[
     { title: 'ID', field: 'id' },
     { title: 'Booking Type', field: 'bookingType' },
     { title: 'Vehicle Type', field: 'vehicleType' },
@@ -78,13 +88,34 @@ const Dynamic: React.FC = () => {
         </IconButton>
       ),
     },
+  ],[]);
+  const handleAddRow = (newRowData: { [key: string]: string | number }) => {
+    axios
+      .post('http://localhost:8080/api/pricingHourlydetails', newRowData)
+      .then((response) => {
+        setData((prevData) => [...prevData, response.data]);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+     });
+  };
+  const fields = [
+    { label: 'Booking Type', name: 'bookingType', type: 'text' },
+    { label: 'Vehicle Type', name: 'vehicleType', type: 'text' },
+    { label: 'Base Price Per Km', name: 'basePricePerKm', type: 'number' },
+    { label: 'Interval Change Km', name: 'intervalChangeKm', type: 'number' },
+    { label: 'Increment in Price', name: 'incrementInPrice', type: 'number' },
+    { label: 'Decrement in Price', name: 'decrementInPrice', type: 'number' },
+    { label: 'Max Cap', name: 'maxCap', type: 'number' },
+    { label: 'Min Cap', name: 'minCap', type: 'number' }
   ];
+ 
 
   return (
     <div>
       {isEditing ? (
         <div className={classes.breadcrumbs}>
-          {/* Assuming BreadcrumbsComponent is another component */}
+         
           <BreadcrumbsComponent handleCancel={handleCancel} 
            breadcrumblabels={['Dynamic Pricing','Edit Dynamic Pricing']} />
           <DynamicEdit
@@ -95,18 +126,31 @@ const Dynamic: React.FC = () => {
             setIsEditing={setIsEditing}
           />
         </div>
-      ) : (
-        <div className={classes.container}>
-          <Table<Pricing>
-            options={{ search: true, paging: false, padding: 'dense' }}
-            columns={columns}
-            data={data}
-            style={{ boxShadow: 'none' }}
-          />
+      ) : isAdding?(
+        <div className={classes.breadcrumbs}>
+        <BreadcrumbsComponent handleCancel={handleCancel}
+            breadcrumblabels={['Hourly Pricing','Edit Hourly Pricing']} />
+        <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
         </div>
-      )}
-    </div>
+      ):(<div className={classes.container}>
+        <Table<Pricing>
+          options={{ search: true, paging: false, padding: 'dense' }}
+          columns={columns}
+          data={data}
+          style={{ boxShadow: 'none' }}
+        />
+        <Button
+          className={classes.addButton}
+          color="primary"
+          variant="contained"
+          onClick={handleAddClick}
+        >
+          Add Pricing
+        </Button>
+      </div>)}
+      </div>
   );
 };
+ 
 
 export default Dynamic;

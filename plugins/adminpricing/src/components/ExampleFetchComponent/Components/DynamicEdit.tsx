@@ -38,7 +38,7 @@ const DynamicEdit: React.FC<EditableFormProps> = ({
         setData((prev) =>
           prev.map((item) => (item.id === editableRow.id ? editableRow : item))
         );
-        setIsEditing(false); // Exit edit mode
+        setIsEditing(false); 
       } catch (error) {
         console.error('Error updating data:', error);
       }

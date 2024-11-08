@@ -32,11 +32,11 @@ const EditableForm: React.FC<EditableFormProps> = ({
   const handleSave = async () => {
     if (editableRow) {
       try {
-        await axios.put(`http://localhost:8080/api/pricingdetails/${editableRow.id}`, editableRow);
+        await axios.put(`http://localhost:8080/api/updatePricing/${editableRow.id}`, editableRow);
         setData((prev) =>
           prev.map((item) => (item.id === editableRow.id ? editableRow : item))
         );
-        setIsEditing(false); // Exit edit mode
+        setIsEditing(false);
       } catch (error) {
         console.error('Error updating data:', error);
       }

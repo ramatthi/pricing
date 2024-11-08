@@ -11,6 +11,7 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ handleSave, handleCancel 
   return (
     <Grid item xs={12}>
       <Button 
+        type='submit'
         variant="contained" 
         color="primary" 
         onClick={handleSave} 
