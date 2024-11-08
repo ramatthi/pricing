@@ -1,84 +1,41 @@
 import React from 'react';
-import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
+import { Box, Typography, Card, CardContent } from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
+
 import FlatComponent from './Flat';
 import SlabComponent from './Slab';
-
+import Dynamic from './Dynamic'; 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        padding: 2,
-        bgcolor: '#f5f5f5',
-      }}
-    >
-      <Card
-        sx={{
-          maxWidth: 1300,
-          width: '100%',
-          minHeight: 670,
-          boxShadow: 3,
-          borderRadius: 2,
-        }}
-      >
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+   
+      <Card sx={{ maxWidth: 1600, width: '100%', minHeight: 900, boxShadow: 3 }}>
         <CardContent>
-          {/* Header Buttons */}
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              gap: 2,
-              justifyContent: 'center',
-              mb: 3,
-              bgcolor: '#ffffff',
-              padding: 1,
-              borderRadius: '8px',
-              boxShadow: 2,
-            }}
-          >
-            {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map(label => (
+          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, marginBottom: 3, borderBottom: '1px solid #ddd' }}>
+            {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map((label) => (
               <NavLink
                 key={label}
                 to={`${label}component`}
                 style={({ isActive }) => ({
                   textDecoration: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: '20px',
+                  padding: '10px 20px',
+                  borderBottom: isActive ? '3px solid blue' : '3px solid transparent',
+                  color: isActive ? 'blue' : 'black',
+                  fontWeight: isActive ? 'bold' : 'normal',
                   cursor: 'pointer',
-                  fontWeight: 'bold',
-                  color: isActive ? '#ffffff' : '#007BFF',
-                  padding: '8px 16px',
-                  backgroundColor: isActive ? '#007BFF' : '#e0e0e0',
-                  transition: 'background-color 0.3s ease, color 0.3s ease',
                 })}
               >
-                <Typography variant="body1">{label}</Typography>
+                {label}
               </NavLink>
             ))}
           </Box>
 
-          {/* Route components for different tabs */}
-          <Box sx={{ marginTop: 3 }}>
+          <Box sx={{ padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
               <Route path="Slabcomponent" element={<SlabComponent />} />
-              {/* Add routes for Dynamic, Intercity, Hourly components here */}
+              <Route path="Dynamiccomponent" element={<Dynamic />} />
+              
             </Routes>
           </Box>
         </CardContent>
@@ -86,5 +43,5 @@ export const ExampleFetchComponent: React.FC = () => {
     </Box>
   );
 };
-
+ 
 export default ExampleFetchComponent;
