@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Table, TableColumn } from '@backstage/core-components';
-import { makeStyles, IconButton, Button } from '@material-ui/core';
+import { makeStyles, IconButton } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
-
 import BreadcrumbsComponent from '../Components/Breadcrumbs';
-import FlatEdit from '../Components/FlatEdit';
 import AddPricing from '../Components/AddPricing';
+import EditPricing from '../Components/Edit';
+import AddPricingButton from '../Components/AddPricingButton';
 
 type Pricing = {
   id: number;
@@ -16,7 +16,7 @@ type Pricing = {
   maxDistance: number;
   price: number;
   previousPrice: number;
-  isActive: boolean;
+  isActive: string;
   approvedBy: string;
   createdBy: number;
   updatedBy: number;
@@ -66,9 +66,26 @@ const FlatComponent: React.FC = () => {
     setIsAdding(false);
   };
 
-  const handleFieldChange = (field: string, value: any) => {
+  const handleEditRow = (field: string, value: any) => {
     if (editableRow) {
       setEditableRow({ ...editableRow, [field]: value });
+    }
+  };
+
+  const handleUpdateRow = () => {
+    if (editableRow) {
+      axios
+        .put(`http://localhost:8080/api/updatePricing/${editableRow.id}`, editableRow)
+        .then((response) => {
+          
+          setData((prev) =>
+            prev.map((item) => (item.id === editableRow.id ? { ...editableRow, ...response.data } : item))
+          );
+          setIsEditing(false); 
+        })
+        .catch((error) => {
+          console.error('Error updating data:', error);
+        });
     }
   };
 
@@ -124,18 +141,19 @@ const FlatComponent: React.FC = () => {
             handleCancel={handleCancel}
             breadcrumblabels={['Flat Pricing', 'Edit Flat Pricing']}
           />
-          <FlatEdit
-            editableRow={editableRow}
-            onFieldChange={handleFieldChange}
+          <EditPricing
+            fields={fields}
+            handleEditRow={handleEditRow}
             handleCancel={handleCancel}
-            setData={setData}
-            setIsEditing={setIsEditing}
+            initialRowData={editableRow || undefined}
+            handleUpdateRow={handleUpdateRow} 
+            isEditing={isEditing} 
           />
         </div>
       ) : isAdding?(
         <div className={classes.breadcrumbs}>
         <BreadcrumbsComponent handleCancel={handleCancel}
-            breadcrumblabels={['Hourly Pricing','Edit Hourly Pricing']} />
+            breadcrumblabels={['Flat Pricing','Edit Flat Pricing']} />
         <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
         </div>
       ):(<div className={classes.container}>
@@ -145,14 +163,7 @@ const FlatComponent: React.FC = () => {
           data={data}
           style={{ boxShadow: 'none' }}
         />
-        <Button
-          className={classes.addButton}
-          color="primary"
-          variant="contained"
-          onClick={handleAddClick}
-        >
-          Add Pricing
-        </Button>
+       <AddPricingButton onClick={handleAddClick} />
         
       </div>)}
       </div>

@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
-import { Button, IconButton, makeStyles } from '@material-ui/core';
+import {  IconButton, makeStyles } from '@material-ui/core';
 import { Table, TableColumn } from '@backstage/core-components';
 import EditIcon from '@material-ui/icons/Edit';
 import BreadcrumbsComponent from '../Components/Breadcrumbs';
-import DynamicEdit from '../Components/DynamicEdit';
 import AddPricing from '../Components/AddPricing';
+import EditPricing from '../Components/Edit';
+import AddPricingButton from '../Components/AddPricingButton';
 
 type Pricing = {
   id: number;
@@ -62,12 +63,28 @@ const Dynamic: React.FC = () => {
   };
 
   
-  const handleFieldChange = (field: string, value: any) => {
+  const handleEditRow = (field: string, value: any) => {
     if (editableRow) {
       setEditableRow({ ...editableRow, [field]: value });
     }
   };
 
+  const handleUpdateRow = () => {
+    if (editableRow) {
+      axios
+        .put(`http://localhost:8080/api/updatePricing/${editableRow.id}`, editableRow)
+        .then((response) => {
+          
+          setData((prev) =>
+            prev.map((item) => (item.id === editableRow.id ? { ...editableRow, ...response.data } : item))
+          );
+          setIsEditing(false); 
+        })
+        .catch((error) => {
+          console.error('Error updating data:', error);
+        });
+    }
+  };
 
   const columns: TableColumn<Pricing>[] = useMemo(() =>[
     { title: 'ID', field: 'id' },
@@ -118,18 +135,19 @@ const Dynamic: React.FC = () => {
          
           <BreadcrumbsComponent handleCancel={handleCancel} 
            breadcrumblabels={['Dynamic Pricing','Edit Dynamic Pricing']} />
-          <DynamicEdit
-            editableRow={editableRow}
-            onFieldChange={handleFieldChange}
+          <EditPricing
+            fields={fields}
+            handleEditRow={handleEditRow}
             handleCancel={handleCancel}
-            setData={setData}
-            setIsEditing={setIsEditing}
+            initialRowData={editableRow || undefined}
+            handleUpdateRow={handleUpdateRow} 
+            isEditing={isEditing} 
           />
         </div>
       ) : isAdding?(
         <div className={classes.breadcrumbs}>
         <BreadcrumbsComponent handleCancel={handleCancel}
-            breadcrumblabels={['Hourly Pricing','Edit Hourly Pricing']} />
+            breadcrumblabels={['Dynamic Pricing','Edit Dynamic Pricing']} />
         <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
         </div>
       ):(<div className={classes.container}>
@@ -139,14 +157,7 @@ const Dynamic: React.FC = () => {
           data={data}
           style={{ boxShadow: 'none' }}
         />
-        <Button
-          className={classes.addButton}
-          color="primary"
-          variant="contained"
-          onClick={handleAddClick}
-        >
-          Add Pricing
-        </Button>
+       <AddPricingButton onClick={handleAddClick} />
       </div>)}
       </div>
   );

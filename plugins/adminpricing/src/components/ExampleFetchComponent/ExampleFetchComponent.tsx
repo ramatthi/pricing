@@ -8,9 +8,9 @@ import Hourly from './pages/Hourly';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 ,height:'100vh'}}>
     
-      <Card sx={{ maxWidth: 1600, width: '100%', minHeight: 900, boxShadow: 3 }}>
+      <Card sx={{display:'flex', maxWidth: 1600, width: '100%', minHeight: 900, boxShadow: 3 }}>
         <CardContent>
        
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, marginBottom: 3, borderBottom: '1px solid #ddd' }}>
