@@ -1,61 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Button } from '@material-ui/core';
- 
+
 interface Field {
   label: string;
   name: string;
   type: string | number;
 }
- 
-interface AddPricingProps {
+
+interface EditPricingProps {
   fields: Field[];
   handleCancel: () => void;
-  handleAddRow: (data: { [key: string]: string | number }) => void; 
+  handleEditRow: (field: string, value: any) => void; 
+  initialRowData?: { [key: string]: string | number }; 
+  handleUpdateRow: () => void; 
+  isEditing: boolean; 
 }
- 
-const AddPricing: React.FC<AddPricingProps> = ({ fields, handleCancel, handleAddRow }) => {
 
+const EditPricing: React.FC<EditPricingProps> = ({ fields, handleCancel, handleEditRow, initialRowData, handleUpdateRow,isEditing }) => {
   const initialFormData = fields.reduce<{ [key: string]: string | number }>((acc, field) => {
-    acc[field.name] = ''; 
+    acc[field.name] = initialRowData?.[field.name] ?? '';
     return acc;
   }, {});
- 
 
   const [formData, setFormData] = useState(initialFormData);
- 
+
+  useEffect(() => {
+    if (initialRowData) {
+      setFormData((prevState) => ({
+        ...prevState,
+        ...initialRowData,
+      }));
+    }
+  }, [initialRowData]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
- 
-   
+
     let updatedValue: string | number = value;
     if (type === 'number') {
-      updatedValue = value === '' ? '' : Number(value); 
+      updatedValue = value === '' ? '' : Number(value);
     }
- 
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: updatedValue,
     }));
+
+    handleEditRow(name, updatedValue); 
   };
- 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
- 
-  
-    handleAddRow(formData);
- 
-    
-    setFormData(initialFormData);
- 
-    
-    handleCancel();
+    handleUpdateRow(); 
+    handleCancel(); 
   };
- 
+
   return (
     <div className="formContainer">
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-        
           {fields.map((field) => (
             <Grid item xs={12} sm={6} key={field.name}>
               <TextField
@@ -64,7 +67,8 @@ const AddPricing: React.FC<AddPricingProps> = ({ fields, handleCancel, handleAdd
                 value={formData[field.name] || ''}
                 onChange={handleChange}
                 name={field.name}
-                type={field.type as React.HTMLInputTypeAttribute} 
+                type={field.type as React.HTMLInputTypeAttribute}
+                disabled={field.name === 'createdBy' && isEditing}  
                 InputProps={{
                   inputMode: field.type === 'number' ? 'numeric' : 'text',
                 }}
@@ -73,16 +77,14 @@ const AddPricing: React.FC<AddPricingProps> = ({ fields, handleCancel, handleAdd
           ))}
         </Grid>
         <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
-          Submit
+          Update
         </Button>
-        <Button onClick={handleCancel} color="secondary" variant="contained" style={{marginTop :'17px',marginLeft :'10px'}}>
+        <Button onClick={handleCancel} color="secondary" variant="contained" style={{ marginTop: '17px', marginLeft: '10px' }}>
           Cancel
-        </Button> 
+        </Button>
       </form>
     </div>
   );
 };
- 
-export default AddPricing;
- 
- 
+
+export default EditPricing;

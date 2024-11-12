@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
+import { Box, Card, CardContent } from '@mui/material';
 import { NavLink, Routes, Route } from 'react-router-dom';
 import FlatComponent from './pages/Flat';
 import SlabComponent from './pages/Slab';
@@ -8,11 +8,11 @@ import Hourly from './pages/Hourly';
 
 export const ExampleFetchComponent: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 0 ,height:'100vh'}}>
     
-      <Card sx={{ maxWidth: 1600, width: '100%', minHeight: 900, boxShadow: 3 }}>
+      <Card sx={{display:'flex', maxWidth: 1600, width: '100%', minHeight: 900, boxShadow: 3 }}>
         <CardContent>
-          {/* Header Buttons (Styled as Tabs) */}
+       
           <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2, marginBottom: 3, borderBottom: '1px solid #ddd' }}>
             {['Flat', 'Slab', 'Dynamic', 'Intercity', 'Hourly'].map((label) => (
               <NavLink
@@ -32,7 +32,7 @@ export const ExampleFetchComponent: React.FC = () => {
             ))}
           </Box>
 
-          {/* Page Content */}
+         
           <Box sx={{ padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
