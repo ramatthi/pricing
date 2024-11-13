@@ -31,15 +31,12 @@ export const ExampleFetchComponent: React.FC = () => {
               </NavLink>
             ))}
           </Box>
-
-         
           <Box sx={{ padding: 2 }}>
             <Routes>
               <Route path="Flatcomponent" element={<FlatComponent />} />
               <Route path="Slabcomponent" element={<SlabComponent />} />
               <Route path="Dynamiccomponent" element={<Dynamic />} />
               <Route path="Hourlycomponent" element={<Hourly />} />
-              {/* Add other routes as needed */}
             </Routes>
           </Box>
         </CardContent>
