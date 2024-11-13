@@ -8,7 +8,7 @@ import {
   ContentHeader,
   HeaderLabel,
   SupportButton,
-} from '@backstage/core-components';
+} from '@backstage/core-components'; 
 import { ExampleFetchComponent } from '../ExampleFetchComponent';
 
 export const ExampleComponent = () => (
