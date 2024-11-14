@@ -7,6 +7,46 @@
  */
 
 import { createBackend } from '@backstage/backend-defaults';
+import { createBackendModule } from '@backstage/backend-plugin-api';
+import {
+  authProvidersExtensionPoint,
+  createOAuthProviderFactory,
+} from '@backstage/plugin-auth-node';
+import { oidcAuthenticator } from '@backstage/plugin-auth-backend-module-oidc-provider';
+import { stringifyEntityRef, DEFAULT_NAMESPACE } from '@backstage/catalog-model';
+ 
+const keycloakAuthProviderModule = createBackendModule({
+  pluginId: 'auth',
+  moduleId: 'keycloak-auth-provider',
+  register(reg) {
+    reg.registerInit({
+      deps: { providers: authProvidersExtensionPoint },
+      async init({ providers }) {
+        providers.registerProvider({
+          providerId: 'keycloak', // Ensure this matches the provider ID in your config
+          factory: createOAuthProviderFactory({
+            authenticator: oidcAuthenticator,
+            async signInResolver(info, ctx) {
+              const userRef = stringifyEntityRef({
+                kind: 'User',
+                name: info.result.fullProfile.userinfo.sub || info.result.fullProfile.userinfo.sub,
+                namespace: DEFAULT_NAMESPACE,
+              });
+              return ctx.issueToken({
+                claims: {
+                  sub: userRef,
+                  ent: [userRef],
+                },
+              });
+            },
+          }),
+        });
+      },
+    });
+  },
+});
+ 
+// Register the module with your backend
 
 const backend = createBackend();
 
@@ -51,5 +91,6 @@ backend.add(import('@backstage/plugin-search-backend-module-techdocs/alpha'));
 // kubernetes
 backend.add(import('@backstage/plugin-kubernetes-backend/alpha'));
 backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
+backend.add(keycloakAuthProviderModule);
 
 backend.start();
