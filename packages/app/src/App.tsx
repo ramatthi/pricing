@@ -37,6 +37,7 @@ import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { AdminpricingPage } from '@internal/backstage-plugin-adminpricing';
+import { MetaPage } from '@internal/backstage-plugin-meta';
 
 const app = createApp({
   apis,
@@ -97,6 +98,7 @@ const routes = (
     <Route path="/settings" element={<UserSettingsPage />} />
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
     <Route path="/adminpricing" element={<AdminpricingPage />} />
+    <Route path="/meta" element={<MetaPage />} />
   </FlatRoutes>
 );
 

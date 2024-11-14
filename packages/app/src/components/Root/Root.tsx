@@ -81,6 +81,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarScrollWrapper>
           {/* Items in this group will be scrollable if they run out of space */}
           <SidebarItem icon={CurrencyRupeeRoundedIcon} to="adminpricing" text="Admin Pricing" />
+          <SidebarItem icon={CurrencyRupeeRoundedIcon} to="meta" text="Meta Dashboard" />
         </SidebarScrollWrapper>
       </SidebarGroup>
       <SidebarSpace />

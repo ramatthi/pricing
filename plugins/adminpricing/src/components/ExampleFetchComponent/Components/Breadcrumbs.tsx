@@ -12,7 +12,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ handleCance
     <div>
       <Breadcrumbs aria-label="breadcrumb">
         <Link color="inherit" onClick={handleCancel}>
-          {breadcrumblabels[0]};
+          {breadcrumblabels[0]}
         </Link>
         <Typography color="textPrimary">{breadcrumblabels[1]}</Typography>
       </Breadcrumbs>

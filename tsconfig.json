@@ -7,7 +7,7 @@
     "plugins/*/config.d.ts",
     "plugins/*/dev",
     "plugins/*/migrations"
-  ],
+, "plugins/metadata/Components/src/Examplecomponent/Iframes.tsx", "plugins/metadata/Components/ExampleFetchComponent/Iframe.tsx"  ],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "dist-types",

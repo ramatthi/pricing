@@ -7,20 +7,11 @@ import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import AddPricing from '../Components/AddPricing';
 import EditPricing from '../Components/Edit';
 import AddPricingButton from '../Components/AddPricingButton';
+import { FlatPricingConfig, flatPricingConfig, FlatPricing } from './Config';
 
-type Pricing = {
-  id: number;
-  bookingtype: string;
-  vehicletype: string;
-  minDistance: number;
-  maxDistance: number;
-  price: number;
-  previousPrice: number;
-  isActive: string;
-  approvedBy: string;
-  createdBy: number;
-  updatedBy: number;
-};
+interface DenseTableProps {
+  config?: FlatPricingConfig;
+}
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -32,18 +23,17 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
   },
   addButton: {
-    marginRight :'10px',
-    marginBottom: '10px'
-  }
+    marginRight: '10px',
+    marginBottom: '10px',
+  },
 }));
 
-
-const FlatComponent: React.FC = () => {
+const FlatComponent: React.FC<DenseTableProps> = ({ config = flatPricingConfig }) => {
   const classes = useStyles();
-  const [data, setData] = useState<Pricing[]>([]);
-  const [editableRow, setEditableRow] = useState<Pricing | null>(null);
+  const [data, setData] = useState<FlatPricing[]>([]);
+  const [editableRow, setEditableRow] = useState<FlatPricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isAdding,setIsAdding ] =useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     axios
@@ -52,13 +42,14 @@ const FlatComponent: React.FC = () => {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const handleEditClick = (row: Pricing) => {
+  const handleEditClick = (row: FlatPricing) => {
     setEditableRow(row);
     setIsEditing(true);
   };
-  const handleAddClick =() =>{
+
+  const handleAddClick = () => {
     setIsAdding(true);
-  }
+  };
 
   const handleCancel = () => {
     setEditableRow(null);
@@ -77,38 +68,18 @@ const FlatComponent: React.FC = () => {
       axios
         .put(`http://localhost:8080/api/updatePricing/${editableRow.id}`, editableRow)
         .then((response) => {
-          
           setData((prev) =>
-            prev.map((item) => (item.id === editableRow.id ? { ...editableRow, ...response.data } : item))
+            prev.map((item) =>
+              item.id === editableRow.id ? { ...editableRow, ...response.data } : item
+            )
           );
-          setIsEditing(false); 
+          setIsEditing(false);
         })
         .catch((error) => {
           console.error('Error updating data:', error);
         });
     }
   };
-
-  const columns: TableColumn<Pricing>[] = useMemo(() => [
-    { title: 'ID', field: 'id' },
-    { title: 'Booking Type', field: 'bookingtype' },
-    { title: 'Vehicle Type', field: 'vehicletype' },
-    { title: 'Min Distance', field: 'minDistance' },
-    { title: 'Max Distance', field: 'maxDistance' },
-    { title: 'Price', field: 'price' },
-    { title: 'Previous Price', field: 'previousPrice' },
-    { title: 'Created By', field: 'createdBy' },
-    { title: 'Updated By', field: 'updatedBy' },
-    {
-      title: 'Actions',
-      field: 'actions',
-      render: (rowData) => (
-        <IconButton onClick={() => handleEditClick(rowData)}>
-          <EditIcon />
-        </IconButton>
-      ),
-    },
-  ],[]);
 
   const handleAddRow = (newRowData: { [key: string]: string | number }) => {
     axios
@@ -117,57 +88,61 @@ const FlatComponent: React.FC = () => {
         setData((prevData) => [...prevData, response.data]);
       })
       .catch((error) => {
-        console.error('Error fetching data:', error);
-     });
+        console.error('Error adding data:', error);
+      });
   };
-  const fields = [
-   
-    { label: 'Booking Type', name: 'bookingtype', type: 'text' },
-    { label: 'Vehicle Type', name: 'vehicletype', type: 'text' },
-    { label: 'Min Distance', name: 'minDistance', type: 'number' },
-    { label: 'Max Distance', name: 'maxDistance', type: 'number' },
-    { label: 'Price', name: 'price', type: 'number' },
-    { label: 'Previous Price', name: 'previousPrice', type: 'number' },
-    { label: 'Approved By', name: 'approvedBy', type: 'text' },
-    { label: 'Created By', name: 'createdBy', type: 'number' },
-    { label: 'Updated By', name: 'updatedBy', type: 'number' }
-  ];
- 
+
+  const columns: TableColumn<FlatPricing>[] = useMemo(() => {
+    return [
+      ...config.tableColumns,
+      {
+        title: 'Actions',
+        field: 'actions',
+        render: (rowData: FlatPricing) => (
+          <IconButton onClick={() => handleEditClick(rowData)}>
+            <EditIcon />
+          </IconButton>
+        ),
+      },
+    ];
+  }, [config.tableColumns]);
+
+  const fields = config.fields;
+
   return (
     <div>
       {isEditing ? (
         <div className={classes.breadcrumbs}>
-          <BreadcrumbsComponent
-            handleCancel={handleCancel}
-            breadcrumblabels={['Flat Pricing', 'Edit Flat Pricing']}
-          />
+          <BreadcrumbsComponent handleCancel={handleCancel} 
+           breadcrumblabels={['Flat Pricing','Edit Flat Pricing']} />
           <EditPricing
             fields={fields}
             handleEditRow={handleEditRow}
             handleCancel={handleCancel}
             initialRowData={editableRow || undefined}
-            handleUpdateRow={handleUpdateRow} 
-            isEditing={isEditing} 
+            handleUpdateRow={handleUpdateRow}
+            isEditing={isEditing}
           />
         </div>
-      ) : isAdding?(
+      ) : isAdding ? (
         <div className={classes.breadcrumbs}>
-        <BreadcrumbsComponent handleCancel={handleCancel}
-            breadcrumblabels={['Flat Pricing','Edit Flat Pricing']} />
-        <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
+           <BreadcrumbsComponent handleCancel={handleCancel}
+            breadcrumblabels={['Flat Pricing','Add Flat Pricing']} />
+          <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow} />
         </div>
-      ):(<div className={classes.container}>
-        <Table<Pricing>
-          options={{ search: true, paging: false, padding: 'dense' }}
-          columns={columns}
-          data={data}
-          style={{ boxShadow: 'none' }}
-        />
-       <AddPricingButton onClick={handleAddClick} />
-        
-      </div>)}
-      </div>
+      ) : (
+        <div className={classes.container}>
+          <Table<FlatPricing>
+            options={{ search: true, paging: false, padding: 'dense' }}
+            columns={columns}
+            data={data}
+            style={{ boxShadow: 'none' }}
+          />
+          <AddPricingButton onClick={handleAddClick} />
+        </div>
+      )}
+    </div>
   );
 };
- 
+
 export default FlatComponent;

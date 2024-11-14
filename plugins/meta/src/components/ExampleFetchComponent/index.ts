@@ -1,0 +1,1 @@
+export { IframeComponent } from './ExampleFetchComponent'
