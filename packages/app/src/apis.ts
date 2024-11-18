@@ -48,9 +48,7 @@ export const apis: AnyApiFactory[] = [
         popupOptions: {
           size: {
             fullscreen: true,
-            // or specify popup width and height
-            //width: 1000,
-            //height: 1000,
+           
           },
         },
       }),

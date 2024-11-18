@@ -52,15 +52,15 @@ techdocs:
 #       development:
 #         clientId: Backstage_Keycloak
 #         clientSecret: X9jjURan8exVip4jacDHRRLNf3MJU3Cp
-#         # issuer: 'http://localhost:8080/realms/BackStage'
+#         issuer: 'http://localhost:8080/realms/BackStage'
 #         metadataUrl: 'http://localhost:8080/realms/BackStage/.well-known/openid-configuration'
-#         # authUrl: 'http://localhost:8080/realms/BackStage/protocol/openid-connect/auth'
-#         # tokenUrl: 'http://localhost:8080/auth/realms/BackStage/protocol/openid-connect/token'
+        # authUrl: 'http://localhost:8080/realms/BackStage/protocol/openid-connect/auth'
+        # tokenUrl: 'http://localhost:8080/auth/realms/BackStage/protocol/openid-connect/token'
 #         # scope: 'openid'
 #         redirectUri: http://localhost:7007/api/auth/keycloak/handler/frame
-#         # signIn:
-#         #   resolvers:
-#         #     - resolver: usernameMatchingUserEntityName
+        # signIn:
+        #   resolvers:
+        #     - resolver: usernameMatchingUserEntityName
 
 scaffolder:
   # Software template options configuration
