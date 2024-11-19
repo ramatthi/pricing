@@ -1,59 +1,58 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Table, TableColumn } from '@backstage/core-components';
-import { IconButton, makeStyles, } from '@material-ui/core';
+import { IconButton,  } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import EditPricing from '../Components/Edit';
 import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import AddPricing from '../Components/AddPricing';
 import AddPricingButton from '../Components/AddPricingButton';
 import { PricingConfig, pricingConfig, Pricing } from './Config';
- 
-const useStyles = makeStyles((theme) => ({
-  container: { backgroundColor: 'transparent', marginTop: '-35px' },
-  breadcrumbs: { marginBottom: theme.spacing(2), cursor: 'pointer' },
-  addButton: { marginRight: '10px', marginBottom: '14px' },
-}));
- 
+import useStyles from './Styles';
+
+
 interface DenseTableProps {
   config?: PricingConfig;
 }
- 
+
 const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
-  const classes = useStyles();
+  const classes = useStyles();   // Custom styling hook Imported from Styles.tsx
   const [data, setData] = useState<Pricing[]>([]);
   const [editableRow, setEditableRow] = useState<Pricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
- 
+
   useEffect(() => {
     axios
       .get('http://localhost:8080/api/pricingdetails')
       .then((response) => setData(response.data))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
- 
+
   const handleEditClick = (row: Pricing) => {
     setEditableRow(row);
     setIsEditing(true);
   };
- 
+
+  // Function to handle the add new pricing button click
   const handleAddClick = () => {
     setIsAdding(true);
   };
- 
+
   const handleCancel = () => {
     setEditableRow(null);
     setIsEditing(false);
     setIsAdding(false);
   };
- 
+
+  // Function to update a specific field of the editable row
   const handleEditRow = (field: string, value: any) => {
     if (editableRow) {
       setEditableRow({ ...editableRow, [field]: value });
     }
   };
- 
+
+  // Function to update the row in the backend after editing
   const handleUpdateRow = () => {
     if (editableRow) {
       axios
@@ -71,9 +70,8 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
         });
     }
   };
- 
+
   const columns: TableColumn<Pricing>[] = useMemo(() => {
-   
     return [
       ...config.tableColumns,
       {
@@ -87,7 +85,7 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
       },
     ];
   }, [config.tableColumns]);
- 
+
   const handleAddRow = (newRowData: { [key: string]: string | number }) => {
     axios
       .post('http://localhost:8080/api/addSlabPricing', newRowData)
@@ -98,15 +96,15 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
         console.error('Error adding data:', error);
       });
   };
- 
+
   const fields = config.fields;
- 
+
   return (
     <div>
       {isEditing ? (
         <div className={classes.breadcrumbs}>
-         <BreadcrumbsComponent handleCancel={handleCancel} 
-           breadcrumblabels={['Slab Pricing','Edit Slab Pricing']} />
+          <BreadcrumbsComponent handleCancel={handleCancel} 
+            breadcrumblabels={['Slab Pricing','Edit Slab Pricing']} />
           <EditPricing
             fields={fields}
             handleEditRow={handleEditRow}
@@ -124,17 +122,20 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
         </div>
       ) : (
         <div className={classes.container}>
-          <Table<Pricing>
-            options={{ search: true, paging: false, padding: 'dense' }}
-            columns={columns}
-            data={data}
-            style={{ boxShadow: 'none' }}
-          />
+         
+          <div className={classes.tableWrapper}>
+            <Table<Pricing>
+              options={{ search: true, paging: false, padding: 'dense' }}
+              columns={columns}
+              data={data}
+              style={{ boxShadow: 'none' }}
+            />
+          </div>
           <AddPricingButton onClick={handleAddClick} />
         </div>
       )}
     </div>
   );
 };
- 
+
 export default DenseTable;

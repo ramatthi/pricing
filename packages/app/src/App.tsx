@@ -18,6 +18,7 @@ import {
   techdocsPlugin,
   TechDocsReaderPage,
 } from '@backstage/plugin-techdocs';
+import { TechRadarPage } from '@backstage/plugin-tech-radar';
 import { TechDocsAddons } from '@backstage/plugin-techdocs-react';
 import { ReportIssue } from '@backstage/plugin-techdocs-module-addons-contrib';
 import { UserSettingsPage } from '@backstage/plugin-user-settings';
@@ -25,20 +26,24 @@ import { apis } from './apis';
 import { entityPage } from './components/catalog/EntityPage';
 import { searchPage } from './components/search/SearchPage';
 import { Root } from './components/Root';
-
-import {
-  AlertDisplay,
-  OAuthRequestDialog,
-  SignInPage,
-} from '@backstage/core-components';
+import { AlertDisplay, OAuthRequestDialog } from '@backstage/core-components';
 import { createApp } from '@backstage/app-defaults';
 import { AppRouter, FlatRoutes } from '@backstage/core-app-api';
 import { CatalogGraphPage } from '@backstage/plugin-catalog-graph';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
+import { oidcAuthApiRef } from './apis';
+import { SignInProviderConfig, SignInPage } from '@backstage/core-components';
 import { AdminpricingPage } from '@internal/backstage-plugin-adminpricing';
 import { MetaPage } from '@internal/backstage-plugin-meta';
 
+
+const keycloakProvider: SignInProviderConfig = {
+  id: 'oidc-auth-provider',
+  title: 'Keycloak SSO',
+  message: 'Sign in with Keycloak SSO',
+  apiRef: oidcAuthApiRef,
+};
 const app = createApp({
   apis,
   bindRoutes({ bind }) {
@@ -59,7 +64,12 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
+    SignInPage: props => (
+      <SignInPage
+        {...props}
+        auto
+        provider={keycloakProvider}
+      />),
   },
 });
 
@@ -84,6 +94,10 @@ const routes = (
     </Route>
     <Route path="/create" element={<ScaffolderPage />} />
     <Route path="/api-docs" element={<ApiExplorerPage />} />
+    <Route
+      path="/tech-radar"
+      element={<TechRadarPage width={1500} height={800} />}
+    />
     <Route
       path="/catalog-import"
       element={

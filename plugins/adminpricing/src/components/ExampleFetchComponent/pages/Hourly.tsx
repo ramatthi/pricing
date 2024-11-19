@@ -7,30 +7,20 @@ import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import AddPricing from '../Components/AddPricing';
 import EditPricing from '../Components/Edit';
 import AddPricingButton from '../Components/AddPricingButton';
+import { HourlyPricingConfig, hourlyPricingConfig, HourlyPricing } from './Config';
+import useStyles from './Styles';
 
-type Pricing = {
-  id: number;
-  booking_type: string;
-  vehicle_type: string;
-  hours: number;
-  kilometers: number;
-  price: number;
-  approvedBy: number;
-};
 
-const useStyles = makeStyles((theme) => ({
-  container: { backgroundColor: 'transparent', marginTop: '-35px' },
-  breadcrumbs: { marginBottom: theme.spacing(2), cursor: 'pointer' },
-  addButton: {
-    marginRight :'10px',
-    marginBottom: '10px'
-  }
-}));
+interface DenseTableProps {
+  config?: HourlyPricingConfig;
+}
 
-const Hourly: React.FC = () => {
+
+
+const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
   const classes = useStyles();
-  const [data, setData] = useState<Pricing[]>([]);
-  const [editableRow, setEditableRow] = useState<Pricing | null>(null);
+  const [data, setData] = useState<HourlyPricing[]>([]);
+  const [editableRow, setEditableRow] = useState<HourlyPricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding,setIsAdding ] =useState(false);
 
@@ -41,7 +31,7 @@ const Hourly: React.FC = () => {
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const handleEditClick = (row: Pricing) => {
+  const handleEditClick = (row: HourlyPricing) => {
     setEditableRow(row);
     setIsEditing(true);
   };
@@ -77,24 +67,8 @@ const Hourly: React.FC = () => {
         });
     }
   };
-  const columns: TableColumn<Pricing>[] = useMemo (() =>[
-    { title: 'ID', field: 'id' },
-    { title: 'Booking Type', field: 'booking_type' },
-    { title: 'Vehicle Type ID', field: 'vehicle_type_id' },
-    { title: 'Hours', field: 'hours' },
-    { title: 'Kilometers', field: 'kilometers' },
-    { title: 'Price', field: 'price' },
-    { title: 'Approved By', field: 'approvedBy' },
-    {
-      title: 'Actions', 
-      field: 'actions',
-      render: (rowData) => (
-        <IconButton onClick={() => handleEditClick(rowData)}>
-          <EditIcon />
-        </IconButton>
-      ),
-    },
-  ],[]);
+
+  
   const handleAddRow = (newRowData: { [key: string]: string | number }) => {
     axios
       .post('http://localhost:8080/api/pricingHourlydetails', newRowData)
@@ -105,14 +79,24 @@ const Hourly: React.FC = () => {
         console.error('Error fetching data:', error);
      });
   };
-  const fields = [
-    { label: 'Booking Type', name: 'booking_type', type: 'text' },
-    { label: 'Vehicle Type', name: 'vehicle_type', type: 'text' },
-    { label: 'Hours', name: 'hours', type: 'number' },
-    { label: 'Kilometers', name: 'kilometers', type: 'number' },
-    { label: 'Price', name: 'price', type: 'number' },
-    { label: 'Approved By', name: 'approvedBy', type: 'number' }
-  ];
+ 
+  const columns: TableColumn<HourlyPricing>[] = useMemo(() => {
+    return [
+      ...config.tableColumns,
+      {
+        title: 'Actions',
+        field: 'actions',
+        render: (rowData: HourlyPricing) => (
+          <IconButton onClick={() => handleEditClick(rowData)}>
+            <EditIcon />
+          </IconButton>
+        ),
+      },
+    ];
+  }, [config.tableColumns]);
+
+  const fields = config.fields;
+  
 
   return (
     <div>
@@ -136,12 +120,14 @@ const Hourly: React.FC = () => {
         <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
         </div>
       ):(<div className={classes.container}>
-        <Table<Pricing>
+         <div className={classes.tableWrapper}>
+        <Table<HourlyPricing>
           options={{ search: true, paging: false, padding: 'dense' }}
           columns={columns}
           data={data}
           style={{ boxShadow: 'none' }}
         />
+        </div>
         <AddPricingButton onClick={handleAddClick} />
       </div>)}
       </div>

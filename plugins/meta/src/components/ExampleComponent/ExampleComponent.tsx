@@ -12,8 +12,8 @@ import { IframeComponent } from '../ExampleFetchComponent';
 
 export const ExampleComponent = () => (
   <Page themeId="tool">
-    <Header title="Welcome to Dashboard!" subtitle=""
-    style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 1000, width: '100%' }}
+    <Header title="Welcome to Meta Dashboard!" subtitle=""
+    style={{ position: 'sticky', top: 0, left: 0, right: 0, zIndex: 1000, width: '100%', color: 'red'  }}
     > 
     </Header>
     <Content>

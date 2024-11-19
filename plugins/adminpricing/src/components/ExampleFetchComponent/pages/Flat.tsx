@@ -8,25 +8,13 @@ import AddPricing from '../Components/AddPricing';
 import EditPricing from '../Components/Edit';
 import AddPricingButton from '../Components/AddPricingButton';
 import { FlatPricingConfig, flatPricingConfig, FlatPricing } from './Config';
+import useStyles from './Styles';
+
 
 interface DenseTableProps {
   config?: FlatPricingConfig;
 }
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    backgroundColor: 'transparent',
-    marginTop: '-35px',
-  },
-  breadcrumbs: {
-    marginBottom: theme.spacing(2),
-    cursor: 'pointer',
-  },
-  addButton: {
-    marginRight: '10px',
-    marginBottom: '10px',
-  },
-}));
 
 const FlatComponent: React.FC<DenseTableProps> = ({ config = flatPricingConfig }) => {
   const classes = useStyles();
@@ -132,12 +120,18 @@ const FlatComponent: React.FC<DenseTableProps> = ({ config = flatPricingConfig }
         </div>
       ) : (
         <div className={classes.container}>
+
+          <div className={classes.tableWrapper}>
           <Table<FlatPricing>
             options={{ search: true, paging: false, padding: 'dense' }}
             columns={columns}
             data={data}
-            style={{ boxShadow: 'none' }}
+            style={{   boxShadow: 'none',
+              textTransform: 'lowercase',  
+              border: 'none',  
+              width: '100%', }}
           />
+          </div>
           <AddPricingButton onClick={handleAddClick} />
         </div>
       )}

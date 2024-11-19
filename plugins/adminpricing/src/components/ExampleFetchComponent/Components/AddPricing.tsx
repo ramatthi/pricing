@@ -54,7 +54,13 @@ const AddPricing: React.FC<AddPricingProps> = ({ fields, handleCancel, handleAdd
   return (
     <div className="formContainer">
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
+        <Grid 
+        style={ {padding:'2px',
+          position: 'static',
+          wordBreak: 'normal',
+          font:'7000',
+            borderBottom: '1px solid #d5d5d5'}}
+        container spacing={2}>
         
           {fields.map((field) => (
             <Grid item xs={12} sm={6} key={field.name}>
