@@ -7,31 +7,31 @@ import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import AddPricing from '../Components/AddPricing';
 import EditPricing from '../Components/Edit';
 import AddPricingButton from '../Components/AddPricingButton';
-import { HourlyPricingConfig, hourlyPricingConfig, HourlyPricing } from './Config';
+import { IntercityPricingConfig, intercityPricingConfig, IntercityPricing } from './Config';
 import useStyles from './Styles';
 
 
 interface DenseTableProps {
-  config?: HourlyPricingConfig;
+  config?: IntercityPricingConfig;
 }
 
 
 
-const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
+const Intercity: React.FC<DenseTableProps> = ({config= intercityPricingConfig}) => {
   const classes = useStyles();
-  const [data, setData] = useState<HourlyPricing[]>([]);
-  const [editableRow, setEditableRow] = useState<HourlyPricing | null>(null);
+  const [data, setData] = useState<IntercityPricing[]>([]);
+  const [editableRow, setEditableRow] = useState<IntercityPricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isAdding,setIsAdding ] =useState(false);
 
   useEffect(() => {
     axios
-      .get('http://localhost:8080/api/pricingHourlydetails')
+      .get('http://localhost:8080/api/pricingIntercitydetails')
       .then((response) => setData(response.data))
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  const handleEditClick = (row: HourlyPricing) => {
+  const handleEditClick = (row: IntercityPricing) => {
     setEditableRow(row);
     setIsEditing(true);
   };
@@ -67,11 +67,11 @@ const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
         });
     }
   };
-
-  
+   
+ 
   const handleAddRow = (newRowData: { [key: string]: string | number }) => {
     axios
-      .post('http://localhost:8080/api/pricingHourlydetails', newRowData)
+      .post('http://localhost:8080/api/', newRowData)
       .then((response) => {
         setData((prevData) => [...prevData, response.data]);
       })
@@ -79,14 +79,13 @@ const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
         console.error('Error fetching data:', error);
      });
   };
- 
-  const columns: TableColumn<HourlyPricing>[] = useMemo(() => {
+  const columns: TableColumn<IntercityPricing>[] = useMemo(() => {
     return [
       ...config.tableColumns,
       {
         title: 'Actions',
         field: 'actions',
-        render: (rowData: HourlyPricing) => (
+        render: (rowData: IntercityPricing) => (
           <IconButton onClick={() => handleEditClick(rowData)}>
             <EditIcon />
           </IconButton>
@@ -96,14 +95,13 @@ const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
   }, [config.tableColumns]);
 
   const fields = config.fields;
-  
 
   return (
     <div>
       {isEditing ? (
         <div className={classes.breadcrumbs}>
           <BreadcrumbsComponent handleCancel={handleCancel} 
-            breadcrumblabels={['Hourly Pricing','Edit Hourly Pricing']} />
+            breadcrumblabels={['Intercity Pricing','Edit Intercity Pricing']} />
           <EditPricing
             fields={fields}
             handleEditRow={handleEditRow}
@@ -116,12 +114,12 @@ const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
       ) : isAdding?(
         <div className={classes.breadcrumbs}>
         <BreadcrumbsComponent handleCancel={handleCancel}
-            breadcrumblabels={['Hourly Pricing','Edit Hourly Pricing']} />
+            breadcrumblabels={['Intercity Pricing','Add Intercity Pricing']} />
         <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow}/>
         </div>
       ):(<div className={classes.container}>
          <div className={classes.tableWrapper}>
-        <Table<HourlyPricing>
+        <Table<IntercityPricing>
           options={{ search: true, paging: false, padding: 'dense' }}
           columns={columns}
           data={data}
@@ -134,4 +132,4 @@ const Hourly: React.FC<DenseTableProps> = ({config =hourlyPricingConfig}) => {
   );
 };
 
-export default Hourly;
+export default Intercity;

@@ -55,6 +55,7 @@
   },
   "packageManager": "yarn@4.4.1",
   "dependencies": {
+    "@backstage/plugin-tech-radar": "^0.7.4",
     "@mui/icons-material": "^6.1.6"
   }
 }

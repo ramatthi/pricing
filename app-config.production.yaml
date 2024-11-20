@@ -29,8 +29,17 @@ backend:
       #     $file: <file-path>/ca/server.crt
 
 auth:
+  session:
+    secret: SHZ2/jKybsW1tPrsWndJMDEeOHzYYDiBcBjqgcTBoPQ=
   providers:
-    guest: {}
+    keycloak:
+      development:
+        realm: BackStage
+        clientId: Backstage_Keycloak
+        clientSecret: X9jjURan8exVip4jacDHRRLNf3MJU3Cp
+        metadataUrl: http://localhost:8080/realms/BackStage/.well-known/openid-configuration
+      # scope: 'openid profile email'
+        redirectUri: http://localhost:7007/api/auth/keycloak-auth-provider/handler/frame
 
 catalog:
   # Overrides the default list locations from app-config.yaml as these contain example data.

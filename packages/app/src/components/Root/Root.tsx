@@ -28,6 +28,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { MyGroupsSidebarItem } from '@backstage/plugin-org';
 import GroupIcon from '@material-ui/icons/People';
 import CurrencyRupeeRoundedIcon from '@mui/icons-material/CurrencyRupeeRounded';
+import BarChartIcon from '@mui/icons-material/BarChart';
 
 const useSidebarLogoStyles = makeStyles({
   root: {
@@ -81,6 +82,7 @@ export const Root = ({ children }: PropsWithChildren<{}>) => (
         <SidebarScrollWrapper>
           {/* Items in this group will be scrollable if they run out of space */}
           <SidebarItem icon={CurrencyRupeeRoundedIcon} to="adminpricing" text="Admin Pricing" />
+          <SidebarItem icon={BarChartIcon} to="meta" text="Meta Dashboard" />
         </SidebarScrollWrapper>
       </SidebarGroup>
       <SidebarSpace />

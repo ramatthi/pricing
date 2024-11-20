@@ -1,26 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { Table, TableColumn } from '@backstage/core-components';
-import { IconButton, makeStyles, } from '@material-ui/core';
+import { IconButton,  } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import EditPricing from '../Components/Edit';
 import BreadcrumbsComponent from '../Components/Breadcrumbs';
 import AddPricing from '../Components/AddPricing';
 import AddPricingButton from '../Components/AddPricingButton';
-import { PricingConfig, pricingConfig, Pricing } from './config';
+import { PricingConfig, pricingConfig, Pricing } from './Config';
+import useStyles from './Styles';
 
-const useStyles = makeStyles((theme) => ({
-  container: { backgroundColor: 'transparent', marginTop: '-35px' },
-  breadcrumbs: { marginBottom: theme.spacing(2), cursor: 'pointer' },
-  addButton: { marginRight: '10px', marginBottom: '14px' },
-}));
 
 interface DenseTableProps {
   config?: PricingConfig;
 }
 
 const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
-  const classes = useStyles();
+  const classes = useStyles();   // Custom styling hook Imported from Styles.tsx
   const [data, setData] = useState<Pricing[]>([]);
   const [editableRow, setEditableRow] = useState<Pricing | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -38,6 +34,7 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
     setIsEditing(true);
   };
 
+  // Function to handle the add new pricing button click
   const handleAddClick = () => {
     setIsAdding(true);
   };
@@ -48,12 +45,14 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
     setIsAdding(false);
   };
 
+  // Function to update a specific field of the editable row
   const handleEditRow = (field: string, value: any) => {
     if (editableRow) {
       setEditableRow({ ...editableRow, [field]: value });
     }
   };
 
+  // Function to update the row in the backend after editing
   const handleUpdateRow = () => {
     if (editableRow) {
       axios
@@ -104,10 +103,8 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
     <div>
       {isEditing ? (
         <div className={classes.breadcrumbs}>
-          <BreadcrumbsComponent
-            handleCancel={handleCancel}
-            breadcrumblabels={[config.breadcrumbs.edit, config.breadcrumbs.edit1]}
-          />
+          <BreadcrumbsComponent handleCancel={handleCancel} 
+            breadcrumblabels={['Slab Pricing','Edit Slab Pricing']} />
           <EditPricing
             fields={fields}
             handleEditRow={handleEditRow}
@@ -119,20 +116,21 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
         </div>
       ) : isAdding ? (
         <div className={classes.breadcrumbs}>
-          <BreadcrumbsComponent
-            handleCancel={handleCancel}
-            breadcrumblabels={[config.breadcrumbs.add, config.breadcrumbs.add1]}
-          />
+          <BreadcrumbsComponent handleCancel={handleCancel}
+            breadcrumblabels={['Slab Pricing','Add Slab Pricing']} />
           <AddPricing fields={fields} handleCancel={handleCancel} handleAddRow={handleAddRow} />
         </div>
       ) : (
         <div className={classes.container}>
-          <Table<Pricing>
-            options={{ search: true, paging: false, padding: 'dense' }}
-            columns={columns}
-            data={data}
-            style={{ boxShadow: 'none' }}
-          />
+         
+          <div className={classes.tableWrapper}>
+            <Table<Pricing>
+              options={{ search: true, paging: false, padding: 'dense' }}
+              columns={columns}
+              data={data}
+              style={{ boxShadow: 'none' }}
+            />
+          </div>
           <AddPricingButton onClick={handleAddClick} />
         </div>
       )}
