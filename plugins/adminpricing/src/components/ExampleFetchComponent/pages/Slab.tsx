@@ -73,7 +73,6 @@ const DenseTable: React.FC<DenseTableProps> = ({ config = pricingConfig }) => {
   };
 
   const columns: TableColumn<Pricing>[] = useMemo(() => {
-    // Add the edit button inside the column definitions
     return [
       ...config.tableColumns,
       {
