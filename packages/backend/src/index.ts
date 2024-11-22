@@ -14,6 +14,7 @@ import {
 } from '@backstage/plugin-auth-node';
 import { oidcAuthenticator } from '@backstage/plugin-auth-backend-module-oidc-provider';
 import { stringifyEntityRef, DEFAULT_NAMESPACE } from '@backstage/catalog-model';
+
  
 const keycloakAuthProviderModule = createBackendModule({
   pluginId: 'auth',
@@ -73,9 +74,11 @@ backend.add(import('@backstage/plugin-catalog-backend-module-logs'));
 // permission plugin
 backend.add(import('@backstage/plugin-permission-backend/alpha'));
 // See https://backstage.io/docs/permissions/getting-started for how to create your own permission policy
-backend.add(
-  import('@backstage/plugin-permission-backend-module-allow-all-policy'),
-);
+// backend.add(
+//   import('@backstage/plugin-permission-backend-module-allow-all-policy'),
+// );
+backend.add(import('../src/extensions/permissionsPolicyExtension'));
+backend.add(import('../src/extensions/catalogPermissionRules'));
 
 // search plugin
 backend.add(import('@backstage/plugin-search-backend/alpha'));

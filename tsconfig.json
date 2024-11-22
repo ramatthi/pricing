@@ -7,7 +7,7 @@
     "plugins/*/config.d.ts",
     "plugins/*/dev",
     "plugins/*/migrations"
-  ],
+, "packages/backend/src/extensions/permissions.ts"  ],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "dist-types",

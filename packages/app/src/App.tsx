@@ -34,6 +34,8 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { oidcAuthApiRef } from './apis';
 import { SignInProviderConfig, SignInPage } from '@backstage/core-components';
+import { AdminpricingPage } from '@internal/backstage-plugin-adminpricing';
+;import { adminpricingViewPermission } from '../../backend/src/extensions/permissions';
 
 // NOTE: Here you add the example provider to display Sign-in page
 const keycloakProvider: SignInProviderConfig = {
@@ -109,6 +111,17 @@ const routes = (
     </Route>
     <Route path="/settings" element={<UserSettingsPage />} />
     <Route path="/catalog-graph" element={<CatalogGraphPage />} />
+    <Route
+  path="/adminpricing"
+  element={
+    <RequirePermission
+      permission={adminpricingViewPermission}
+      resourceRef="plugin-adminpricing" // Add the resourceRef here
+    >
+      <AdminpricingPage />
+    </RequirePermission>
+  }
+/>
   </FlatRoutes>
 );
 export default app.createRoot(

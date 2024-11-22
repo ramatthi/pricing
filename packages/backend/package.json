@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@backstage/backend-defaults": "^0.5.1",
+    "@backstage/backend-plugin-api": "^1.0.2",
+    "@backstage/catalog-model": "^1.7.1",
     "@backstage/config": "^1.2.0",
     "@backstage/plugin-app-backend": "^0.3.76",
     "@backstage/plugin-auth-backend": "^0.23.1",
@@ -26,6 +28,7 @@
     "@backstage/plugin-catalog-backend": "^1.27.0",
     "@backstage/plugin-catalog-backend-module-logs": "^0.1.2",
     "@backstage/plugin-catalog-backend-module-scaffolder-entity-model": "^0.2.1",
+    "@backstage/plugin-catalog-node": "^1.14.0",
     "@backstage/plugin-kubernetes-backend": "^0.18.7",
     "@backstage/plugin-permission-backend": "^0.5.50",
     "@backstage/plugin-permission-backend-module-allow-all-policy": "^0.2.1",
@@ -42,7 +45,8 @@
     "app": "link:../app",
     "better-sqlite3": "^9.0.0",
     "node-gyp": "^10.0.0",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@backstage/cli": "^0.28.0"

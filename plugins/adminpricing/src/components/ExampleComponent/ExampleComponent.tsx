@@ -9,6 +9,8 @@ import {
   HeaderLabel,
   SupportButton,
 } from '@backstage/core-components';
+import { usePermission } from '@backstage/plugin-permission-react';
+import { AdminpricingPage } from '@internal/backstage-plugin-adminpricing';
 import { ExampleFetchComponent } from '../ExampleFetchComponent';
 
 export const ExampleComponent = () => (
