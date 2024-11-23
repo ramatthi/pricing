@@ -65,6 +65,8 @@
     "@backstage/plugin-permission-react": "^0.4.28",
     "@backstage/plugin-tech-radar": "^0.7.4",
     "@internal/backstage-plugin-adminpricing": "workspace:^",
-    "@mui/icons-material": "^6.1.6"
+    "@internal/backstage-plugin-adminpricing-common": "workspace:^",
+    "@mui/icons-material": "^6.1.6",
+    "new": "^0.1.1"
   }
 }

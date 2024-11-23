@@ -74,9 +74,10 @@ backend.add(import('@backstage/plugin-catalog-backend-module-logs'));
 // permission plugin
 backend.add(import('@backstage/plugin-permission-backend/alpha'));
 // See https://backstage.io/docs/permissions/getting-started for how to create your own permission policy
-// backend.add(
-//   import('@backstage/plugin-permission-backend-module-allow-all-policy'),
-// );
+backend.add(import('@backstage/plugin-permission-backend'));
+backend.add(
+  import('@backstage/plugin-permission-backend-module-allow-all-policy'),
+);
 backend.add(import('../src/extensions/permissionsPolicyExtension'));
 backend.add(import('../src/extensions/catalogPermissionRules'));
 
@@ -96,4 +97,5 @@ backend.add(import('@backstage/plugin-kubernetes-backend/alpha'));
 backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
 backend.add(keycloakAuthProviderModule);
 
+backend.add(import('@internal/backstage-plugin-adminpricing-backend'));
 backend.start();
